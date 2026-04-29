@@ -1,0 +1,28 @@
+{
+  "name": "csc337_finalproject",
+  "version": "1.0.0",
+  "description": "This project consists of three interconnected modules.A module is a part of the project that has its own database document (MongoDB collection)\r 1. **User Module**: Handles user registration, authentication (login, logout, etc.), and session management.\r 2. **Product Module (Shirts)**: Manages the inventory database and displays the catalog to users.\r 3. **Order Module**: Manages the shopping cart and stores finalized transaction data.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tanner110304t/csc337_finalProject.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/tanner110304t/csc337_finalProject/issues"
+  },
+  "homepage": "https://github.com/tanner110304t/csc337_finalProject#readme",
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "express-session": "^1.19.0",
+    "mongodb": "^7.2.0"
+  }
+}
