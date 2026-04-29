@@ -1,6 +1,9 @@
 // Load environment variables from the .env file
 require('dotenv').config();
 
+const { setServers } = require('node:dns');
+setServers(["1.1.1.1", "8.8.8.8"]);
+
 const express = require('express');
 const { MongoClient } = require('mongodb');
 const session = require('express-session');
