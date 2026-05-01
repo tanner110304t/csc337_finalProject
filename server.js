@@ -44,22 +44,19 @@ async function connectDB() {
 
     } catch (err) {
         console.error("MongoDB connection error:", err);
+        process.exit(1);
     }
 }
-connectDB();
+connectDB().then(function() {
+    const userRoutes = require('./routes/userRoutes');
+    const productRoutes = require('./routes/productRoutes');
+    const orderRoutes = require('./routes/orderRoutes');
 
-// --- ROUTER SETUP ---
-// Import the router files for each of your three modules
-const userRoutes = require('./routes/userRoutes');
-const productRoutes = require('./routes/productRoutes');
-const orderRoutes = require('./routes/orderRoutes');
+    app.use('/users', userRoutes);
+    app.use('/products', productRoutes);
+    app.use('/orders', orderRoutes);
 
-// Mount the routers to specific URL paths to enable logical navigation
-app.use('/users', userRoutes);
-app.use('/products', productRoutes);
-app.use('/orders', orderRoutes);
-
-// --- START SERVER
-app.listen(port, () => {
-    console.log(`Server is running at http://localhost:${port}`);
+    app.listen(port, function() {
+        console.log("Server is running at http://localhost:" + port);
+    });
 });

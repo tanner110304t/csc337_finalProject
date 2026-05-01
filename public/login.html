@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <h1>ThreadLine Login</h1>
+
+    <div>
+        <h2 id="form-title">Login</h2>
+
+        <input type="text" id="username" placeholder="Username">
+        <br>
+        <input type="password" id="password" placeholder="Password">
+        <br>
+
+        <button id="main-button" onclick="login()">Login</button>
+        <button id="switch-button" onclick="showRegister()">Create New User</button>
+
+        <p id="message"></p>
+    </div>
+
+    <script>
+        function showRegister() {
+            document.getElementById("form-title").innerText = "Create Account";
+            document.getElementById("main-button").innerText = "Register";
+            document.getElementById("main-button").onclick = function() {
+                register();
+            };
+            document.getElementById("switch-button").innerText = "Back to Login";
+            document.getElementById("switch-button").onclick = function() {
+                showLogin();
+            };
+            document.getElementById("message").innerText = "";
+        }
+
+        function showLogin() {
+            document.getElementById("form-title").innerText = "Login";
+            document.getElementById("main-button").innerText = "Login";
+            document.getElementById("main-button").onclick = function() {
+                login();
+            };
+            document.getElementById("switch-button").innerText = "Create New User";
+            document.getElementById("switch-button").onclick = function() {
+                showRegister();
+            };
+            document.getElementById("message").innerText = "";
+        }
+
+        function register() {
+            var username = document.getElementById("username").value;
+            var password = document.getElementById("password").value;
+
+            fetch("/users/register", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username: username, password: password })
+            })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                document.getElementById("message").innerText = data.message;
+
+                if (data.success) {
+                    showLogin();
+                }
+            });
+        }
+
+        function login() {
+            var username = document.getElementById("username").value;
+            var password = document.getElementById("password").value;
+
+            fetch("/users/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username: username, password: password })
+            })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                document.getElementById("message").innerText = data.message;
+
+                if (data.success) {
+                    window.location.href = "shirts.html";
+                }
+            });
+        }
+    </script>
+</body>
+</html>

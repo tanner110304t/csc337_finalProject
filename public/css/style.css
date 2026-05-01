@@ -1,0 +1,35 @@
+body {
+    font-family: Arial;
+    background: #f5f5f5;
+    text-align: center;
+}
+
+h1 {
+    margin-top: 40px;
+}
+
+div {
+    background: white;
+    width: 300px;
+    margin: 50px auto;
+    padding: 20px;
+    border-radius: 5px;
+}
+
+input {
+    width: 90%;
+    padding: 8px;
+    margin: 10px 0;
+}
+
+button {
+    padding: 10px;
+    margin: 5px;
+    width: 95%;
+    cursor: pointer;
+}
+
+#message {
+    color: red;
+    margin-top: 10px;
+}
