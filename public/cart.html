@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cart</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <h1>Your Cart</h1>
+
+    <p>
+        <a href="shirts.html">Products</a> |
+        <a href="cart.html">Cart</a> |
+        <a href="/users/logout">Logout</a>
+    </p>
+
+    <div id="cart-container">Checking session...</div>
+
+    <script>
+        fetch("/users/check")
+        .then(function(res) {
+            return res.json();
+        })
+        .then(function(data) {
+            if (!data.loggedIn) {
+                window.location.href = "login.html";
+                return;
+            }
+            renderCart();
+        });
+
+        function getCart() {
+            try {
+                var raw = localStorage.getItem("threadline_cart");
+                return raw ? JSON.parse(raw) : [];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function saveCart(cart) {
+            localStorage.setItem("threadline_cart", JSON.stringify(cart));
+        }
+
+        function renderCart() {
+            var cart = getCart();
+            var el = document.getElementById("cart-container");
+
+            if (!cart.length) {
+                el.innerHTML =
+                    "<p>Your cart is empty.</p>" +
+                    "<p><a href='shirts.html'>Browse shirts</a></p>";
+                return;
+            }
+
+            var total = 0;
+            var html = "<div id='cart-contents'>";
+
+            for (var i = 0; i < cart.length; i++) {
+                var line = cart[i];
+                var qty = line.qty || 1;
+                var lineTotal = Number(line.price) * qty;
+                total += lineTotal;
+
+                html += "<div class='cart-line'>";
+                html += "<div class='cart-line-info'>";
+                html += "<strong>" + escapeHtml(line.name) + "</strong>";
+                html += "<br>$" + Number(line.price).toFixed(2) + " × " + qty +
+                    " = $" + lineTotal.toFixed(2);
+                html += "</div>";
+                html += "<div class='cart-line-actions'>";
+                html += "<button type='button' onclick='changeQty(\"" +
+                    escapeAttr(line.id) + "\", 1)'>+</button>";
+                html += "<button type='button' onclick='changeQty(\"" +
+                    escapeAttr(line.id) + "\", -1)'>−</button>";
+                html += "<button type='button' onclick='removeLine(\"" +
+                    escapeAttr(line.id) + "\")'>Remove</button>";
+                html += "</div>";
+                html += "</div>";
+            }
+
+            html += "<p class='cart-total'><strong>Total: $" + total.toFixed(2) + "</strong></p>";
+            html += "<p class='cart-pay'><button type='button' onclick=\"goToPay()\">Pay</button></p>";
+            html += "<p><a href='shirts.html'>Continue shopping</a></p>";
+            html += "</div>";
+
+            el.innerHTML = html;
+        }
+
+        function escapeHtml(s) {
+            return String(s)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/"/g, "&quot;");
+        }
+
+        function escapeAttr(s) {
+            return String(s).replace(/\\/g, "\\\\").replace(/"/g, '\\"');
+        }
+
+        function changeQty(id, delta) {
+            var cart = getCart();
+            for (var i = 0; i < cart.length; i++) {
+                if (cart[i].id === id) {
+                    cart[i].qty = (cart[i].qty || 1) + delta;
+                    if (cart[i].qty < 1) {
+                        cart.splice(i, 1);
+                    }
+                    break;
+                }
+            }
+            saveCart(cart);
+            renderCart();
+        }
+
+        function removeLine(id) {
+            var cart = getCart();
+            var next = [];
+            for (var i = 0; i < cart.length; i++) {
+                if (cart[i].id !== id) {
+                    next.push(cart[i]);
+                }
+            }
+            saveCart(next);
+            renderCart();
+        }
+
+        function goToPay() {
+            window.location.href = "payment.html";
+        }
+    </script>
+</body>
+</html>

@@ -29,6 +29,28 @@
             loadProducts();
         });
 
+        var productById = {};
+
+        function productIdStr(id) {
+            if (!id && id !== 0) return "";
+            if (typeof id === "string") return id;
+            if (id && id.$oid) return id.$oid;
+            return String(id);
+        }
+
+        function getCart() {
+            try {
+                var raw = localStorage.getItem("threadline_cart");
+                return raw ? JSON.parse(raw) : [];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function saveCart(cart) {
+            localStorage.setItem("threadline_cart", JSON.stringify(cart));
+        }
+
         function loadProducts() {
             fetch("/products")
             .then(function(res) {
@@ -38,8 +60,16 @@
                 var productsDiv = document.getElementById("products");
                 productsDiv.innerHTML = "";
 
+                productById = {};
+
                 for (var i = 0; i < data.products.length; i++) {
                     var p = data.products[i];
+                    var sid = productIdStr(p._id);
+                    productById[sid] = {
+                        id: sid,
+                        name: p.name,
+                        price: Number(p.price)
+                    };
 
                     productsDiv.innerHTML = productsDiv.innerHTML +
                         "<div class='product-card'>" +
@@ -47,14 +77,36 @@
                         "<p>" + p.category + "</p>" +
                         "<p>" + p.description + "</p>" +
                         "<p>$" + Number(p.price).toFixed(2) + "</p>" +
-                        "<button onclick='addToCart(\"" + p._id + "\")'>Add to Cart</button>" +
+                        "<button onclick='addToCart(\"" + sid + "\")'>Add to Cart</button>" +
                         "</div>";
                 }
             });
         }
 
         function addToCart(id) {
-            alert("Added to cart");
+            var p = productById[id];
+            if (!p) return;
+
+            var cart = getCart();
+            var found = null;
+            for (var i = 0; i < cart.length; i++) {
+                if (cart[i].id === id) {
+                    found = cart[i];
+                    break;
+                }
+            }
+            if (found) {
+                found.qty = found.qty + 1;
+            } else {
+                cart.push({
+                    id: p.id,
+                    name: p.name,
+                    price: p.price,
+                    qty: 1
+                });
+            }
+            saveCart(cart);
+            alert("Added to cart.");
         }
     </script>
 </body>
