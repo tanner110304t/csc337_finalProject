@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Shirts</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <h1>ThreadLine Shirts</h1>
+
+    <p>
+        <a href="shirts.html">Products</a> |
+        <a href="cart.html">Cart</a> |
+        <a href="/users/logout">Logout</a>
+    </p>
+
+    <div id="products">Loading products...</div>
+
+    <script>
+        fetch("/users/check")
+        .then(function(res) {
+            return res.json();
+        })
+        .then(function(data) {
+            if (!data.loggedIn) {
+                window.location.href = "login.html";
+                return;
+            }
+
+            loadProducts();
+        });
+
+        function loadProducts() {
+            fetch("/products")
+            .then(function(res) {
+                return res.json();
+            })
+            .then(function(data) {
+                var productsDiv = document.getElementById("products");
+                productsDiv.innerHTML = "";
+
+                for (var i = 0; i < data.products.length; i++) {
+                    var p = data.products[i];
+
+                    productsDiv.innerHTML = productsDiv.innerHTML +
+                        "<div class='product-card'>" +
+                        "<h3>" + p.name + "</h3>" +
+                        "<p>" + p.category + "</p>" +
+                        "<p>" + p.description + "</p>" +
+                        "<p>$" + Number(p.price).toFixed(2) + "</p>" +
+                        "<button onclick='addToCart(\"" + p._id + "\")'>Add to Cart</button>" +
+                        "</div>";
+                }
+            });
+        }
+
+        function addToCart(id) {
+            alert("Added to cart");
+        }
+    </script>
+</body>
+</html>
