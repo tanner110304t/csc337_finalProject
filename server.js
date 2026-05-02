@@ -1,6 +1,10 @@
 // Load environment variables from the .env file
 require('dotenv').config();
 
+const dns = require('dns');
+// Force Node.js to use Google and Cloudflare's public DNS servers
+dns.setServers(['8.8.8.8', '1.1.1.1']);
+
 const express = require('express');
 const { MongoClient } = require('mongodb');
 const session = require('express-session');
