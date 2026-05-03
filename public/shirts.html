@@ -13,6 +13,8 @@
         <a href="/users/logout">Logout</a>
     </p>
 
+    <p id="cart-message"></p>
+
     <div id="products">Loading products...</div>
 
     <script>
@@ -43,8 +45,8 @@
 
                     productsDiv.innerHTML = productsDiv.innerHTML +
                         "<div class='product-card'>" +
+                        "<img class='product-img' src='images/" + getImage(p.name) + "'>" +
                         "<h3>" + p.name + "</h3>" +
-                        "<p>" + p.category + "</p>" +
                         "<p>" + p.description + "</p>" +
                         "<p>$" + Number(p.price).toFixed(2) + "</p>" +
                         "<button onclick='addToCart(\"" + p._id + "\")'>Add to Cart</button>" +
@@ -53,8 +55,40 @@
             });
         }
 
+        function getImage(name) {
+            if (name === "Classic Black T-Shirt") {
+                return "black_shirt.jpg";
+            }
+
+            if (name === "White Oversized Tee") {
+                return "white_shirt.jpg";
+            }
+
+            if (name === "Navy Athletic Shirt") {
+                return "navy_shirt.jpg";
+            }
+
+            if (name === "Graphic Logo Tee") {
+                return "graphic_tee.jpg";
+            }
+
+            return "black_shirt.jpg";
+        }
+
         function addToCart(id) {
-            alert("Added to cart");
+            fetch("/orders/add", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ productId: id })
+            })
+            .then(function(res) {
+                return res.json();
+            })
+            .then(function(data) {
+                document.getElementById("cart-message").innerText = data.message;
+            });
         }
     </script>
 </body>

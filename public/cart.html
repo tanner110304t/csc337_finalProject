@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cart</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <h1>Your Cart</h1>
+
+    <p>
+        <a href="shirts.html">Products</a> |
+        <a href="cart.html">Cart</a> |
+        <a href="/users/logout">Logout</a>
+    </p>
+
+    <p id="cart-message"></p>
+
+    <div id="cart">Loading cart...</div>
+
+    <script>
+        fetch("/users/check")
+        .then(function(res) {
+            return res.json();
+        })
+        .then(function(data) {
+            if (!data.loggedIn) {
+                window.location.href = "login.html";
+                return;
+            }
+
+            loadCart();
+        });
+
+        function loadCart() {
+            fetch("/orders/cart")
+            .then(function(res) {
+                return res.json();
+            })
+            .then(function(data) {
+                var cartDiv = document.getElementById("cart");
+                cartDiv.innerHTML = "";
+
+                if (!data.success) {
+                    cartDiv.innerText = data.message;
+                    return;
+                }
+
+                if (data.cart.length === 0) {
+                    cartDiv.innerHTML = "<p>Your cart is empty.</p>";
+                    return;
+                }
+
+                var total = 0;
+
+                for (var i = 0; i < data.cart.length; i++) {
+                    var item = data.cart[i];
+                    total = total + Number(item.price);
+
+                    cartDiv.innerHTML = cartDiv.innerHTML +
+                        "<div class='cart-item'>" +
+                            "<div class='cart-info'>" +
+                                "<h3>" + item.name + "</h3>" +
+                                "<p>" + item.category + "</p>" +
+                                "<p>" + item.description + "</p>" +
+                            "</div>" +
+                            "<div class='cart-price'>$" + Number(item.price).toFixed(2) + "</div>" +
+                            "<button class='remove-btn' onclick='removeItem(" + i + ")'>Remove</button>" +
+                        "</div>";
+                }
+
+                cartDiv.innerHTML = cartDiv.innerHTML +
+                    "<div class='cart-summary'>" +
+                        "<h2>Total: $" + total.toFixed(2) + "</h2>" +
+                        "<button onclick='checkout()'>Checkout</button>" +
+                        "<button onclick='clearCart()'>Clear Cart</button>" +
+                    "</div>";
+            });
+        }
+
+        function removeItem(index) {
+            fetch("/orders/remove", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ index: index })
+            })
+            .then(function(res) {
+                return res.json();
+            })
+            .then(function(data) {
+                document.getElementById("cart-message").innerText = data.message;
+                loadCart();
+            });
+        }
+
+        function clearCart() {
+            fetch("/orders/clear", {
+                method: "POST"
+            })
+            .then(function(res) {
+                return res.json();
+            })
+            .then(function(data) {
+                document.getElementById("cart-message").innerText = data.message;
+                loadCart();
+            });
+        }
+
+        function checkout() {
+            window.location.href = "payment.html";
+        }
+    </script>
+</body>
+</html>
