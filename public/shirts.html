@@ -1,21 +1,28 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Shirts</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Shirts — ThreadLine</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <h1>ThreadLine Shirts</h1>
+    <div class="page">
+        <header class="site-header">
+            <h1>ThreadLine</h1>
+            <p class="site-tagline">Pick your favorites</p>
+        </header>
 
-    <p>
-        <a href="shirts.html">Products</a> |
-        <a href="cart.html">Cart</a> |
-        <a href="/users/logout">Logout</a>
-    </p>
+        <nav class="site-nav" aria-label="Main">
+            <a href="shirts.html">Products</a>
+            <a href="cart.html">Cart</a>
+            <a href="/users/logout">Logout</a>
+        </nav>
 
-    <p id="cart-message"></p>
+        <p id="cart-message"></p>
 
-    <div id="products">Loading products...</div>
+        <div id="products">Loading products...</div>
+    </div>
 
     <script>
         fetch("/users/check")
